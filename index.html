@@ -4,15 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#04070d">
-<title>S_PDH — GORE</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>S_PDH GORE</title>
 <style>
 /* ================================================================
-   S_PDH GORE - UI SYSTEM v2.0
-   Professional responsive design | Mobile & Desktop
+   S_PDH GORE - UI SYSTEM v2.5
+   Professional responsive design | Landscape-first | Mobile & Desktop
    ================================================================ */
 :root{
   --blue:#2a6bff;--ice:#cfe0ff;--red:#ff2b3a;--cyan:#4fe3ff;
-  --gold:#ffd34a;--green:#3dff9a;
+  --gold:#ffd34a;--green:#3dff9a;--blood:#8e0f18;--blood2:#6a050a;
   --f:Bahnschrift,"DIN Alternate","Arial Narrow","Roboto Condensed","Segoe UI",system-ui,sans-serif;
   --panel:rgba(8,16,38,.92);--border:rgba(80,130,255,.32);
 }
@@ -26,6 +29,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;bac
 .screen.on{display:flex}
 .logo{position:relative;font:900 clamp(48px,14vw,140px)/.92 var(--f);letter-spacing:.015em;color:#fff;text-shadow:0 0 5px #fff,0 0 22px #3a7bff,0 0 58px #0b2c9c;animation:flick 7s infinite}
 .logo.sm{font-size:clamp(28px,7vw,56px)}
+/* ═══ NUEVO: GORE glow rojo sangre ═══ */
+.logo.gore{text-shadow:0 0 5px #fff,0 0 22px #ff2b3a,0 0 58px #9c0b1a}
 .logo::before,.logo::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen}
 .logo::before{color:#8bb8ff;animation:gA 2.7s infinite steps(1)}
 .logo::after{color:#1a3fc4;animation:gB 3.6s infinite steps(1)}
@@ -83,6 +88,14 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;bac
 .setting-label{font:700 12px var(--f);letter-spacing:.1em;color:#7fa6ff}
 input[type=range]{width:100%;accent-color:var(--blue)}
 
+/* ═══ NUEVO: Aviso de rotar dispositivo (modo vertical) ═══ */
+#rotateNotice{position:fixed;inset:0;z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;background:#04070d;text-align:center;padding:20px}
+#rotateNotice.on{display:flex}
+#rotateNotice .rot-ico{font-size:64px;color:var(--cyan);animation:rotSpin 2s ease-in-out infinite;margin-bottom:20px}
+#rotateNotice .rot-t{font:900 24px var(--f);letter-spacing:.2em;color:#fff;text-shadow:0 0 20px var(--blue);margin-bottom:12px}
+#rotateNotice .rot-s{font:600 14px var(--f);letter-spacing:.1em;color:#7fa6ff}
+@keyframes rotSpin{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+
 @media (max-width:700px){
   .lobby-body{flex-direction:column}
   .lobby-panel{padding:12px}
@@ -98,17 +111,41 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   .logo{font-size:clamp(36px,10vw,80px)}
   .tag{margin:4px 0 2vh 4px}
 }
+/* ═══ NUEVO: Layout para landscape móvil (evitar scroll y comprimir) ═══ */
+@media (orientation:landscape) and (max-height:520px){
+  .screen{padding:1vh 2vw}
+  .lobby{gap:1vh;width:min(96vw,1100px)}
+  .lobby-header{margin-bottom:0}
+  .logo{font-size:clamp(28px,6vh,52px)}
+  .tag{font-size:clamp(9px,1.4vh,12px);margin:2px 0 1vh 4px;letter-spacing:.3em}
+  .lobby-panel{padding:10px}
+  .panel-title{font-size:clamp(11px,1.6vh,14px);margin-bottom:4px;padding-bottom:4px}
+  .btn{font-size:clamp(10px,1.6vh,13px);padding:8px 12px}
+  .btn.primary{font-size:clamp(13px,2vh,16px);padding:10px 16px;letter-spacing:.22em}
+  .btn.sm{font-size:clamp(9px,1.4vh,12px);padding:7px 10px}
+  .hint{font-size:clamp(8px,1.2vh,10px)}
+  .h2{font-size:clamp(20px,3.6vh,32px);margin-bottom:1vh}
+  #storyTxt{min-height:50vh;font-size:clamp(11px,1.8vh,14px)}
+  .settings-grid{width:min(96vw,700px);grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+}
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
+<!-- ═══ NUEVO: Aviso de rotar dispositivo ═══ -->
+<div id="rotateNotice">
+  <div class="rot-ico">📱</div>
+  <div class="rot-t">GIRA TU DISPOSITIVO</div>
+  <div class="rot-s">S_PDH GORE se juega mejor en horizontal</div>
+</div>
+
 <!-- ==================== MAIN MENU ==================== -->
 <div id="menu" class="screen on">
   <div class="lobby">
     <div class="lobby-header">
-      <div class="logo" data-t="S_PDH">S_PDH</div>
-      <div class="tag">CORE: SECTOR 7 · PROTOCOLO DE DEFENSA</div>
+      <div class="logo gore" data-t="S_PDH GORE">S_PDH GORE</div>
+      <div class="tag">SECTOR 7 · PROTOCOLO DE DEFENSA</div>
     </div>
     <div class="lobby-body">
       <div class="lobby-panel config-panel">
@@ -208,7 +245,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 <!-- ==================== STORY ==================== -->
 <div id="story" class="screen">
   <div class="panel story">
-    <div class="logo sm" data-t="S_PDH">S_PDH</div>
+    <div class="logo sm gore" data-t="S_PDH GORE">S_PDH GORE</div>
     <pre id="storyTxt"></pre>
     <div class="nav"><button class="btn sm" data-a="storyskip">OMITIR</button><button class="btn sm" data-a="storynext" id="storyNext">CONTINUAR</button></div>
   </div>
@@ -216,13 +253,13 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 
 <!-- ==================== CREDITS ==================== -->
 <div id="credits" class="screen">
-  <div class="logo" data-t="S_PDH">S_PDH</div>
+  <div class="logo gore" data-t="S_PDH GORE">S_PDH GORE</div>
   <div class="cl big" style="--i:0">Developed by Samuel PDH</div>
   <div class="cl" style="--i:1">Studio: S_PDH Interactive</div>
   <div class="cl" style="--i:2">Lead Code, Art &amp; Design: Samuel PDH</div>
   <div class="cl dim" style="--i:3">Audio sintetizado en tiempo real · Web Audio API</div>
   <div class="cl dim" style="--i:4">Render 2D propio · cero librerías externas</div>
-  <div class="cl dim" style="--i:5">Motor: S_PDH Engine v2.0</div>
+  <div class="cl dim" style="--i:5">Motor: S_PDH Engine v2.5 GORE</div>
   <div class="cl big" style="--i:6">© 2026 S_PDH Interactive</div>
   <button class="btn back" data-a="menu">VOLVER</button>
 </div>
@@ -244,14 +281,14 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 
 <script>
 // ====================================================================
-//  S_PDH CORE - Game Engine v2.0
+//  S_PDH GORE CORE - Game Engine v2.5
 //  Developed by Samuel PDH | © 2026 S_PDH Interactive
 //  Architecture: Single-file HTML5 Canvas | Zero dependencies
 //  Professional structure inspired by Unity/C# patterns
 // ====================================================================
 (()=>{
 'use strict';
-try{console.log('%cS_PDH CORE v2.0','font:900 28px sans-serif;color:#3a7bff');console.log('© 2026 S_PDH Interactive');}catch(e){}
+try{console.log('%cS_PDH GORE v2.5','font:900 28px sans-serif;color:#ff2b3a');console.log('© 2026 S_PDH Interactive');}catch(e){}
 
 // ====================================================================
 //  REGION: Utility Functions
@@ -267,12 +304,35 @@ function hexRgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255
 function mix(a,b,t){const A=hexRgb(a),B=hexRgb(b);return'rgb('+A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')+')'}
 function txt(g,s,x,y,sz,col,al,wt,glow){g.font=(wt||800)+' '+sz+'px '+FONT;g.textAlign=al||'left';g.textBaseline='alphabetic';if(glow){g.shadowColor=glow;g.shadowBlur=10}g.fillStyle=col;g.fillText(s,x,y);g.shadowBlur=0}
 
+// ═══ NUEVO: Bloqueo horizontal móvil ═══
+function lockLandscape(){
+  try{
+    if(screen.orientation&&screen.orientation.lock){
+      screen.orientation.lock('landscape').catch(()=>{});
+    }
+  }catch(e){}
+  checkOrientation();
+}
+function checkOrientation(){
+  const isPortrait=innerHeight>innerWidth;
+  const notice=$('rotateNotice');
+  if(isPortrait&&isTouch&&innerWidth<900){
+    notice.classList.add('on');
+  }else{
+    notice.classList.remove('on');
+  }
+}
+window.addEventListener('orientationchange',()=>setTimeout(checkOrientation,250));
+window.addEventListener('resize',checkOrientation);
+
 // ====================================================================
 //  REGION: Game Configuration & State
 // ====================================================================
 let state='menu',inGame=false,T=0,isTouch=false,seenIntro=false,afterStory='menu',skinIdx=0;
 try{seenIntro=localStorage.getItem('spdh_intro')==='1';skinIdx=clamp(+localStorage.getItem('spdh_skin')||0,0,5)}catch(e){}
 const K={},mouse={x:0,y:0,down:false};
+// ═══ NUEVO: Estado del botón de disparo dedicado para táctil ═══
+const fireBtn={down:false,pressed:false,id:-1};
 const cam={x:0,y:0,sx:0,sy:0,sh:0,kx:0,ky:0};
 
 // Match configuration
@@ -369,6 +429,8 @@ const SFX={
  sniper(k=1){AU.noise(.7,5000,120,1.1*k,'lowpass',1,true);AU.tone(78,28,.55,1*k,'sawtooth',0,true);AU.noise(.05,9000,4000,.5*k,'highpass')},
  hit(){AU.tone(2000,1300,.05,.28,'square');AU.tone(3000,2400,.04,.14,'triangle')},
  kill(){AU.tone(1400,2200,.08,.3,'square');AU.tone(900,300,.25,.3,'sine',.03);AU.noise(.2,2500,300,.35,'lowpass')},
+ // ═══ NUEVO: SFX para gibs / desmembramiento ═══
+ gib(){AU.noise(.15,1200,180,.6,'lowpass');AU.tone(180,60,.15,.4,'sawtooth');AU.noise(.08,800,200,.4,'bandpass',2)},
  hurt(){AU.tone(140,50,.25,.6,'sawtooth');AU.noise(.18,1200,200,.5,'lowpass')},
  wall(){AU.tone(260,1400,.4,.28,'sawtooth');AU.tone(520,2100,.35,.15,'sine',.05);AU.noise(.3,800,5000,.2,'bandpass',2)},
  wallBreak(){AU.noise(.6,3000,100,.9,'lowpass');AU.tone(120,40,.5,.6,'square')},
@@ -656,7 +718,7 @@ function buildGround(seed,mapIdx){
  g.strokeStyle='#323c50';g.lineWidth=8;g.beginPath();g.arc(CC,CC,88,0,TAU);g.stroke();
  const cg=g.createRadialGradient(CC,CC,4,CC,CC,60);cg.addColorStop(0,'rgba(120,170,255,.75)');cg.addColorStop(1,'rgba(42,107,255,0)');g.fillStyle=cg;g.beginPath();g.arc(CC,CC,60,0,TAU);g.fill();
  g.strokeStyle='rgba(160,200,255,.8)';g.lineWidth=2;g.beginPath();g.arc(CC,CC,50,0,TAU);g.stroke();
- g.fillStyle='rgba(255,255,255,.7)';g.font='900 26px '+FONT;g.textAlign='center';g.fillText('S_PDH',CC,CC+9);
+ g.fillStyle='rgba(255,255,255,.7)';g.font='900 26px '+FONT;g.textAlign='center';g.fillText('S_PDH GORE',CC,CC+9);
  const placed=[];
  const onRoad=(x,y,w,h)=>(y+h>CC-110&&y<CC+110)||(x+w>CC-110&&x<CC+110);
  const free=(x,y,w,h,margin)=>{
@@ -708,6 +770,26 @@ function stampCorpse(e){
  drawHuman(GG,e.x,e.y,e.a+rnd(-.8,.8),{of:e.of,dead:true,alpha:.92,noShadow:true});
  GG.fillStyle='rgba(0,0,0,.34)';GG.beginPath();GG.ellipse(e.x,e.y,e.of.ty+3,e.of.tx+3,e.a,0,TAU);GG.fill();
 }
+// ═══ NUEVO: Sistema de manchas de sangre persistentes (charcos más grandes y realistas) ═══
+function stampGore(x,y,radius=50){
+ if(!GG)return;const g=GG;
+ // Charco principal
+ for(let i=0;i<8;i++){
+  const px=x+rnd(-radius,radius)*.7, py=y+rnd(-radius,radius)*.7, rd=rnd(radius*.5, radius);
+  const gr=g.createRadialGradient(px,py,0,px,py,rd);
+  gr.addColorStop(0,'rgba(100,8,12,.85)');
+  gr.addColorStop(.6,'rgba(70,5,10,.6)');
+  gr.addColorStop(1,'rgba(50,0,5,0)');
+  g.fillStyle=gr;g.beginPath();g.arc(px,py,rd,0,TAU);g.fill();
+ }
+ // Salpicaduras periféricas
+ for(let i=0;i<12;i++){
+  const a=rnd(0,TAU),d=rnd(radius*.8,radius*1.6);
+  const px=x+Math.cos(a)*d, py=y+Math.sin(a)*d, rd=rnd(2,8);
+  g.fillStyle='rgba(80,5,10,'+rnd(.4,.8)+')';
+  g.beginPath();g.arc(px,py,rd,0,TAU);g.fill();
+ }
+}
 
 // ====================================================================
 //  REGION: Entity Classes
@@ -749,10 +831,13 @@ class Wall{
 }
 
 class Particle{
- constructor(x,y,ang,sp,type,life,size,col){this.x=x;this.y=y;this.vx=Math.cos(ang)*sp;this.vy=Math.sin(ang)*sp;this.type=type;this.life=this.max=life;this.size=size;this.col=col;this.rot=Math.random()*TAU;this.vr=rnd(-12,12);this.self=(type==='spark'||type==='ring'||type==='glow')}
+ constructor(x,y,ang,sp,type,life,size,col){this.x=x;this.y=y;this.vx=Math.cos(ang)*sp;this.vy=Math.sin(ang)*sp;this.type=type;this.life=this.max=life;this.size=size;this.col=col;this.rot=Math.random()*TAU;this.vr=rnd(-12,12);this.self=(type==='spark'||type==='ring'||type==='glow'||type==='gib')}
  update(dt){
-  this.life-=dt;const d=Math.exp(-(this.type==='smoke'?2.2:this.type==='casing'?5:3)*dt);this.vx*=d;this.vy*=d;this.x+=this.vx*dt;this.y+=this.vy*dt;this.rot+=this.vr*dt;
-  if(this.life<=0){if(this.type==='blood'&&Math.random()<.5)stampBlood(this.x,this.y,this.size*1.6);this.dead=true}
+  this.life-=dt;const d=Math.exp(-(this.type==='smoke'?2.2:this.type==='casing'?5:this.type==='gib'?2.5:3)*dt);this.vx*=d;this.vy*=d;this.x+=this.vx*dt;this.y+=this.vy*dt;this.rot+=this.vr*dt;
+  if(this.life<=0){if(this.type==='blood'&&Math.random()<.5)stampBlood(this.x,this.y,this.size*1.6);
+   // ═══ NUEVO: Los gibs dejan mancha de sangre al desaparecer ═══
+   if(this.type==='gib'&&Math.random()<.7)stampBlood(this.x,this.y,this.size*2.5);
+   this.dead=true}
  }
  draw(g){
   const k=Math.max(0,this.life/this.max);
@@ -760,6 +845,28 @@ class Particle{
    case'spark':{g.strokeStyle=this.col;g.globalAlpha=k;g.lineWidth=this.size;g.beginPath();g.moveTo(this.x,this.y);g.lineTo(this.x-this.vx*.045,this.y-this.vy*.045);g.stroke();break}
    case'smoke':{g.globalAlpha=k*.28;g.fillStyle=this.col;g.beginPath();g.arc(this.x,this.y,this.size*(1.6-k*.8),0,TAU);g.fill();break}
    case'blood':{g.globalAlpha=Math.min(1,k*2);g.fillStyle=this.col;g.beginPath();g.arc(this.x,this.y,this.size*(.5+k*.5),0,TAU);g.fill();break}
+   // ═══ NUEVO: Gibs - trozos de carne con forma irregular ═══
+   case'gib':{
+     g.globalAlpha=Math.min(1,k*2);
+     g.fillStyle=this.col;
+     g.save();
+     g.translate(this.x,this.y);
+     g.rotate(this.rot);
+     g.beginPath();
+     g.moveTo(-this.size,-this.size*.5);
+     g.lineTo(this.size*.8,-this.size*.8);
+     g.lineTo(this.size,this.size*.6);
+     g.lineTo(-this.size*.7,this.size);
+     g.closePath();
+     g.fill();
+     // Brillo húmedo
+     g.fillStyle='rgba(255,120,120,'+(k*.35)+')';
+     g.beginPath();
+     g.arc(-this.size*.2,-this.size*.2,this.size*.35,0,TAU);
+     g.fill();
+     g.restore();
+     break;
+   }
    case'debris':{g.globalAlpha=Math.min(1,k*2);g.fillStyle=this.col;g.save();g.translate(this.x,this.y);g.rotate(this.rot);g.fillRect(-this.size,-this.size*.6,this.size*2,this.size*1.2);g.restore();break}
    case'casing':{g.globalAlpha=Math.min(1,k*3);g.fillStyle='#d6a63a';g.save();g.translate(this.x,this.y);g.rotate(this.rot);g.fillRect(-2,-1,4,2);g.restore();break}
    case'ring':{g.globalAlpha=k*.8;g.strokeStyle=this.col;g.lineWidth=2.5*k+.5;g.beginPath();g.arc(this.x,this.y,this.size*(1-k)+4,0,TAU);g.stroke();break}
@@ -825,6 +932,8 @@ class Player{
   this.of=of;this.x=WORLD/2;this.y=WORLD/2+150;this.r=13;this.max=100;this.hp=100;this.a=-Math.PI/2;this.vx=0;this.vy=0;this.kx=0;this.ky=0;this.ph=0;this.mv=0;
   this.team=1;this.name='FANTASMA';this.stepT=0;
   this.cur=2;this.w=WEAPONS.map(w=>({mag:w.mag,res:w.reserve,rl:0}));this.cd=0;this.canSemi=true;this.bloom=0;this.rc=0;this.flash=0;this.hurtT=0;this.dead=false;this.wallCd=0;this.hitF=0;this.lastHurtSfx=0;
+  // ═══ NUEVO: Flag para efecto de baja salud (slow-mo único) ═══
+  this.lowHealthEffect=false;
  }
  get wp(){return WEAPONS[this.cur]}get ws(){return this.w[this.cur]}
  update(dt){
@@ -844,7 +953,8 @@ class Player{
   if(isTouch){if(stickR.on&&stickR.mag>.12)this.a=stickR.ang;else if(l>.25&&!stickR.on)this.a=Math.atan2(my,mx)}
   else{const wx=cam.x+(mouse.x-W/2)/Z,wy=cam.y+(mouse.y-H/2)/Z;this.a=Math.atan2(wy-this.y,wx-this.x)}
   this.cd-=dt;this.rc=Math.max(0,this.rc-dt*70);this.flash=Math.max(0,this.flash-dt);this.bloom=Math.max(0,this.bloom-dt*.1);this.hurtT-=dt;this.wallCd-=dt;this.hitF=Math.max(0,this.hitF-dt);
-  const want=(!isTouch&&mouse.down)||(isTouch&&stickR.on&&stickR.fire);
+  // ═══ MEJORA: Incluir botón de disparo dedicado ═══
+  const want=(!isTouch&&mouse.down)||(isTouch&&(stickR.on&&stickR.fire||fireBtn.down));
   if(!want)this.canSemi=true;
   if(ws.rl>0){ws.rl-=dt;if(ws.rl<=0){ws.rl=0;const take=Math.min(wp.mag-ws.mag,ws.res);ws.mag+=take;ws.res-=take}}
   else if(want&&this.cd<=0&&(wp.auto||isTouch||this.canSemi)){
@@ -877,6 +987,14 @@ class Player{
   this.kx+=Math.cos(ang)*40;this.ky+=Math.sin(ang)*40;
   for(let i=0;i<5;i++)parts.push(new Particle(this.x,this.y,ang+rnd(-.8,.8),rnd(60,200),'blood',rnd(.3,.6),rnd(1.6,3),'#8e0f18'));
   
+  // ═══ NUEVO: Slow-motion único al bajar de 30 HP (efecto crítico) ═══
+  if(this.hp<30&&this.hp>0&&!this.lowHealthEffect){
+   this.lowHealthEffect=true;
+   G.slowT=Math.max(G.slowT,1.4);
+   floatText(this.x,this.y-50,'¡ESTADO CRÍTICO!','#ff2b3a',22,1.8);
+   SFX.hurt();
+  }
+  
   if(this.hp<=0){
    this.hp=0;
    if(matchMode!=='SURVIVAL'&&matchMode!=='ROYAL'){
@@ -888,12 +1006,14 @@ class Player{
     shake(20);SFX.kill();
     for(let i=0;i<40;i++)parts.push(new Particle(this.x,this.y,rnd(0,TAU),rnd(60,420),i%3?'blood':'spark',rnd(.4,1),rnd(1.5,3.5),i%3?'#8e0f18':'#ffb050'));
     stampCorpse({x:this.x,y:this.y,a:this.a,of:this.of});
+    stampGore(this.x,this.y,60);
     floatText(this.x,this.y-40,'ELIMINADO','#ff3a4a',28,1.5);
     floatText(this.x,this.y-70,'RESPAWN EN 3s','#4fe3ff',16,2);
    }else{
     this.dead=true;G.deadT=0;G.slowT=.6;shake(20);SFX.kill();
     for(let i=0;i<40;i++)parts.push(new Particle(this.x,this.y,rnd(0,TAU),rnd(60,420),i%3?'blood':'spark',rnd(.4,1),rnd(1.5,3.5),i%3?'#8e0f18':'#ffb050'));
     stampCorpse({x:this.x,y:this.y,a:this.a,of:this.of});
+    stampGore(this.x,this.y,60);
    }
   }
  }
@@ -1043,13 +1163,28 @@ function floatText(x,y,s,col,size,life){fts.push(new FText(x,y,s,col,size,life))
 function onKill(e,ang){
  G.kills++;G.score+=e.T.score*(1+Math.min(G.streak,10)*.1)|0;G.streak++;G.streakT=3.2;G.hit=.3;G.hitKill=true;G.slowT=.2;
  
- // HITSTOP: Freeze game briefly for impact
- hitstopT=0.03;
+ // ═══ MEJORA: HITSTOP más brutal al matar (sensación Unity/GORE) ═══
+ hitstopT=0.06;
  
  shake(13);SFX.kill();
- for(let i=0;i<36;i++)parts.push(new Particle(e.x,e.y,ang+rnd(-1.2,1.2),rnd(80,420),i%4===0?'spark':'blood',rnd(.5,1.3),rnd(2.5,5),i%4===0?'#ffd0a0':'#6a050a'));
- for(let i=0;i<6;i++)parts.push(new Particle(e.x,e.y,rnd(0,TAU),rnd(10,60),'smoke',rnd(.6,1.1),rnd(6,10),'#555a63'));
+ // ═══ MEJORA: Más partículas de sangre + gibs (trozos de carne) ═══
+ for(let i=0;i<50;i++){
+   const isGib=i%3===0;
+   parts.push(new Particle(
+     e.x, e.y,
+     ang+rnd(-1.4,1.4),
+     rnd(80,520),
+     isGib?'gib':(i%4===1?'spark':'blood'),
+     rnd(.5,1.6),
+     isGib?rnd(2.5,5):rnd(2.5,4.5),
+     isGib?'#6a050a':(i%4===1?'#ffd0a0':'#8e0f18')
+   ));
+ }
+ for(let i=0;i<8;i++)parts.push(new Particle(e.x,e.y,rnd(0,TAU),rnd(10,70),'smoke',rnd(.6,1.2),rnd(6,11),'#555a63'));
  parts.push(new Particle(e.x,e.y,0,0,'ring',.45,60,'#ff4a58'));
+ // ═══ NUEVO: Sonido de gibs + charco grande de sangre ═══
+ SFX.gib();
+ stampGore(e.x,e.y,55);
  floatText(e.x,e.y-30,'ELIMINADO','#ff3a4a',24,1.3);
  if(G.streak>=3)floatText(e.x,e.y-56,'RACHA x'+G.streak,'#ffe9a0',16,1.3);
  
@@ -1177,6 +1312,7 @@ function stepGame(rdt){
    P.dead=false;
    P.hp=P.max;
    P.hurtT=0;
+   P.lowHealthEffect=false; // ═══ NUEVO: Reset del efecto crítico al respawnear ═══
    P.vx=0;P.vy=0;P.kx=0;P.ky=0;
    for(let k=0;k<20;k++){
     const a=rnd(0,TAU),d=rnd(200,400);
@@ -1241,8 +1377,7 @@ function stepGame(rdt){
  for(let i=walls.length;i--;){const w=walls[i];if(w.dead)walls.splice(i,1);else if(w.hitT>0)w.hitT-=dt}
  for(const pk of picks){pk.life-=dt;if(!P.dead&&hyp(pk.x-P.x,pk.y-P.y)<28){pk.dead=true;SFX.pick();
    if(pk.type==='med'){P.hp=Math.min(P.max,P.hp+25);floatText(P.x,P.y-30,'+25 SALUD','#3dff9a',16,1)}
-   else{for(let i=0;i<WEAPONS.length;i++)P.w[i].res+=Math.ceil(WEAPONS[i].mag*.8);floatText(P.x,P.y-30,'+MUNICIÓN','#ffd34a',16,1)}}
-  if(pk.life<=0)pk.dead=true}
+   else{for(let i=0;i<WEAPONS.length;i++)P.w[i].res+=Math.ceil(WEAPONS[i].mag*.8);floatText(P.x,P.y-30,'+MUNICIÓN','#ffd34a',16,1)}}}
  const cl=a=>{for(let i=a.length;i--;)if(a[i].dead)a.splice(i,1)};cl(enemies);cl(bullets);cl(parts);cl(fts);cl(picks);
  if(parts.length>700)parts.splice(0,parts.length-700);
  
@@ -1397,9 +1532,9 @@ function drawMinimap(g){
 function drawHUD(g){
  const u=clamp(Math.min(W,H)/700,.8,1.15);
  const gl=Math.sin(T*9)>.965;
- txt(g,'S_PDH',16,28*u,22*u,'#ffffff','left',900,'#2a6bff');
- if(gl){txt(g,'S_PDH',16+2,28*u-1,22*u,'rgba(80,140,255,.7)','left',900)}
- txt(g,'CORE',16+68*u,28*u,11*u,'#7fa6ff','left',700);
+ // ═══ MEJORA: Texto GORE con glow rojo ═══
+ txt(g,'S_PDH GORE',16,28*u,20*u,'#ffffff','left',900,'#ff2b3a');
+ if(gl){txt(g,'S_PDH GORE',16+2,28*u-1,20*u,'rgba(255,60,80,.7)','left',900)}
  const bw=Math.min(250,W*.4)*u,bx=16,by=40*u,bh=14*u,segs=20,hp=P.hp/P.max;
  g.save();g.transform(1,0,-.3,1,by*.3,0);
  g.fillStyle='rgba(2,6,16,.7)';g.fillRect(bx-3,by-3,bw+6,bh+6);
@@ -1451,7 +1586,7 @@ function drawHUD(g){
  txt(g,isTouch?'MURO':'Q MURO',wcx+13*u,wcy+4*u,10*u,cdk>=1?'#4fe3ff':'#7a8bb5','left',800);
  let chx=mouse.x,chy=mouse.y;
  if(isTouch){const ax=P.x+Math.cos(P.a)*120,ay=P.y+Math.sin(P.a)*120;chx=W/2+(ax-cam.x)*Z;chy=H/2+(ay-cam.y)*Z}
- if(!P.dead&&(!isTouch||stickR.on)){
+ if(!P.dead&&(!isTouch||stickR.on||fireBtn.down)){
   const gap=6+(P.bloom+P.wp.spread)*260;g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=2;g.beginPath();
   g.moveTo(chx-gap-8,chy);g.lineTo(chx-gap,chy);g.moveTo(chx+gap,chy);g.lineTo(chx+gap+8,chy);g.moveTo(chx,chy-gap-8);g.lineTo(chx,chy-gap);g.moveTo(chx,chy+gap);g.lineTo(chx,chy+gap+8);g.stroke();
   g.fillStyle='#4fe3ff';g.fillRect(chx-1,chy-1,2,2);
@@ -1459,17 +1594,225 @@ function drawHUD(g){
  if(G.hit>0){const a=G.hit/(G.hitKill?.3:.18),d=G.hitKill?16:10;g.strokeStyle=G.hitKill?'rgba(255,50,60,'+a+')':'rgba(255,255,255,'+a+')';g.lineWidth=2.5;g.beginPath();g.moveTo(chx-d,chy-d);g.lineTo(chx-d*.45,chy-d*.45);g.moveTo(chx+d,chy-d);g.lineTo(chx+d*.45,chy-d*.45);g.moveTo(chx-d,chy+d);g.lineTo(chx-d*.45,chy+d*.45);g.moveTo(chx+d,chy+d);g.lineTo(chx+d*.45,chy+d*.45);g.stroke()}
  if(G.banner){const b=G.banner,a=clamp(Math.min(b.time,2.6-b.time+.2)*2,0,1);g.globalAlpha=a;txt(g,b.t,W/2,H*.28,Math.min(54,W*.09)*u,'#fff','center',900,'#2a6bff');txt(g,b.s,W/2,H*.28+26*u,14*u,'#8fb0ff','center',700);g.globalAlpha=1}
  if(P.hurtT>0||hp<.3){const a=Math.max(P.hurtT>0?P.hurtT/.4*.4:0,hp<.3?.18+.12*Math.sin(T*6):0),rg=g.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.hypot(W,H)*.55);rg.addColorStop(0,'rgba(255,0,30,0)');rg.addColorStop(1,'rgba(255,0,30,'+a+')');g.fillStyle=rg;g.fillRect(0,0,W,H)}
+ // ═══ NUEVO: Sangre en pantalla (post-processing GORE estilo Unity) ═══
+ if(P.hurtT>0){
+   const alpha=Math.min(.6,P.hurtT*2);
+   // Salpicaduras en los bordes
+   g.fillStyle='rgba(120,0,0,'+(alpha*.7)+')';
+   g.beginPath();g.arc(W*.1,H*.15,80,0,TAU);g.fill();
+   g.beginPath();g.arc(W*.92,H*.88,100,0,TAU);g.fill();
+   g.beginPath();g.arc(W*.85,H*.1,60,0,TAU);g.fill();
+   g.beginPath();g.arc(W*.08,H*.85,70,0,TAU);g.fill();
+   // Tintado rojo suave
+   g.fillStyle='rgba(255,0,0,'+(alpha*.15)+')';g.fillRect(0,0,W,H);
+ }
  if(G.slowT>0){g.fillStyle='rgba(120,160,255,.07)';g.fillRect(0,0,W,H)}
  if(isTouch)drawTouch(g);
 }
+// ═══ MEJORA: Botones táctiles rediseñados con posiciones ergonómicas landscape ═══
 function touchButtons(){
- const x=W-52,y0=Math.max(H*.34,2*Math.round(clamp(Math.min(W,H)*.14,54,88))+150);
- return[{id:'wall',x,y:y0,r:30,l:'MURO'},{id:'reload',x,y:y0+70,r:26,l:'RECAR'},{id:'swap',x,y:y0+134,r:26,l:'ARMA'},{id:'pause',x:W-Math.round(clamp(Math.min(W,H)*.14,54,88))*2-44,y:32,r:18,l:'II'}];
+ // ═══ NUEVO: Detecta si estamos en landscape para posicionar mejor ═══
+ const isLandscape=W>H;
+ const baseSize=isLandscape?Math.min(W,H):W;
+ const rBig=Math.round(clamp(baseSize*.075,34,52));   // Fire grande
+ const rMed=Math.round(rBig*.72);                      // Wall
+ const rSm=Math.round(rBig*.6);                        // Reload/Swap
+ // Fire button: esquina inferior derecha
+ const fireX=W-rBig-30;
+ const fireY=H-rBig-30;
+ // Wall: a la izquierda del fire
+ const wallX=fireX-rBig*2.15;
+ const wallY=fireY-rBig*.15;
+ // Reload: arriba del fire
+ const reloadX=fireX-rBig*.15;
+ const reloadY=fireY-rBig*2.0;
+ // Swap: arriba-izquierda del fire
+ const swapX=fireX-rBig*2.0;
+ const swapY=fireY-rBig*1.85;
+ // Pause: esquina superior derecha (dentro del minimapa)
+ const minimapR=Math.round(clamp(Math.min(W,H)*.14,54,88));
+ const pauseX=W-minimapR*2-60;
+ const pauseY=minimapR*2+50;
+ return[
+  {id:'fire',x:fireX,y:fireY,r:rBig,l:''},
+  {id:'wall',x:wallX,y:wallY,r:rMed,l:''},
+  {id:'reload',x:reloadX,y:reloadY,r:rSm,l:''},
+  {id:'swap',x:swapX,y:swapY,r:rSm,l:''},
+  {id:'pause',x:pauseX,y:pauseY,r:Math.round(rSm*.75),l:'II'}
+ ];
+}
+// ═══ NUEVO: Iconos vectoriales estilo shooter profesional (COD Mobile / Free Fire) ═══
+function drawTouchIcon(g,type,x,y,size,color){
+ g.save();
+ g.translate(x,y);
+ g.fillStyle=color||'#cfe0ff';
+ g.strokeStyle=color||'#cfe0ff';
+ g.lineWidth=2;
+ g.lineCap='round';
+ g.lineJoin='round';
+ 
+ if(type==='bullet'){
+   // Proyectil estilizado (bala) apuntando arriba
+   const w=size*.55,h=size*1.1;
+   // Cuerpo de la bala
+   g.beginPath();
+   g.moveTo(0,-h*.5);              // Punta
+   g.lineTo(w*.4,-h*.15);
+   g.lineTo(w*.4,h*.35);
+   g.lineTo(-w*.4,h*.35);
+   g.lineTo(-w*.4,-h*.15);
+   g.closePath();
+   const grd=g.createLinearGradient(0,-h*.5,0,h*.35);
+   grd.addColorStop(0,'#ffd34a');
+   grd.addColorStop(.5,'#e8a020');
+   grd.addColorStop(1,'#8a5a10');
+   g.fillStyle=grd;
+   g.fill();
+   g.strokeStyle='rgba(255,255,255,.5)';
+   g.lineWidth=1.2;
+   g.stroke();
+   // Casquillo inferior (base)
+   g.fillStyle='#c0c4cc';
+   g.fillRect(-w*.42,h*.35,w*.84,h*.18);
+   g.strokeStyle='rgba(0,0,0,.4)';
+   g.strokeRect(-w*.42,h*.35,w*.84,h*.18);
+   // Brillo superior
+   g.fillStyle='rgba(255,255,255,.55)';
+   g.beginPath();
+   g.ellipse(-w*.15,-h*.1,w*.12,h*.2,0,0,TAU);
+   g.fill();
+ } else if(type==='wall'){
+   // Muro de ladrillos (brick pattern)
+   const bw=size*.42,bh=size*.24;
+   for(let row=0;row<3;row++){
+     for(let col=0;col<2;col++){
+       const ox=(row%2)*bw*.5;
+       const bx=-size*.42+col*bw*1.05+ox;
+       const by=-size*.4+row*bh*1.15;
+       if(bx+bw>size*.5)continue;
+       const grd=g.createLinearGradient(bx,by,bx,by+bh);
+       grd.addColorStop(0,'#b4b8bf');
+       grd.addColorStop(1,'#5a5e66');
+       g.fillStyle=grd;
+       g.fillRect(bx,by,bw*.95,bh*.9);
+       g.strokeStyle='rgba(0,0,0,.6)';
+       g.lineWidth=1.2;
+       g.strokeRect(bx,by,bw*.95,bh*.9);
+     }
+   }
+   // Brillo superior
+   g.fillStyle='rgba(79,227,255,.5)';
+   g.fillRect(-size*.45,-size*.55,size*.9,2.5);
+ } else if(type==='reload'){
+   // Flechas circulares de recarga
+   const r=size*.48;
+   g.beginPath();
+   g.arc(0,0,r,-Math.PI*.75,Math.PI*.35);
+   g.stroke();
+   // Punta de flecha
+   const ang=Math.PI*.35;
+   const tipX=Math.cos(ang)*r,tipY=Math.sin(ang)*r;
+   g.beginPath();
+   g.moveTo(tipX,tipY);
+   g.lineTo(tipX-7,tipY-4);
+   g.lineTo(tipX-2,tipY+7);
+   g.closePath();
+   g.fill();
+   // Segunda flecha (offset para dar sensación de ciclo)
+   g.beginPath();
+   g.arc(0,0,r*.6,Math.PI*.25,Math.PI*1.35);
+   g.strokeStyle='rgba(79,227,255,.6)';
+   g.lineWidth=1.5;
+   g.stroke();
+   // Punto central
+   g.fillStyle='rgba(79,227,255,.9)';
+   g.beginPath();
+   g.arc(0,0,2.5,0,TAU);
+   g.fill();
+ } else if(type==='swap'){
+   // Dos armas cruzadas
+   g.strokeStyle=color;
+   g.lineWidth=2.5;
+   g.beginPath();
+   g.moveTo(-size*.4,size*.3);
+   g.lineTo(size*.4,-size*.3);
+   g.moveTo(-size*.4,-size*.3);
+   g.lineTo(size*.4,size*.3);
+   g.stroke();
+   // Puntos en las puntas
+   g.fillStyle=color;
+   g.beginPath();g.arc(-size*.4,size*.3,2,0,TAU);g.fill();
+   g.beginPath();g.arc(-size*.4,-size*.3,2,0,TAU);g.fill();
+ }
+ g.restore();
 }
 function drawTouch(g){
- for(const b of touchButtons()){g.fillStyle='rgba(10,24,56,.55)';g.beginPath();g.arc(b.x,b.y,b.r,0,TAU);g.fill();g.strokeStyle='rgba(120,170,255,.8)';g.lineWidth=2;g.stroke();txt(g,b.l,b.x,b.y+4,b.r>20&&b.l.length>2?10:13,'#cfe0ff','center',800)}
- const ring=(s,col)=>{if(!s.on)return;g.strokeStyle=col;g.lineWidth=2;g.fillStyle='rgba(10,24,56,.3)';g.beginPath();g.arc(s.ox,s.oy,62,0,TAU);g.fill();g.stroke();g.fillStyle='rgba(180,210,255,.55)';g.beginPath();g.arc(s.x,s.y,26,0,TAU);g.fill()};
- ring(stickL,'rgba(120,170,255,.7)');ring(stickR,'rgba(255,120,130,.7)');
+ for(const b of touchButtons()){
+   // ═══ MEJORA: Fondo con gradiente radial para look profesional ═══
+   const isFire=b.id==='fire';
+   const isPressed=isFire&&fireBtn.down;
+   const grd=g.createRadialGradient(b.x,b.y-b.r*.3,0,b.x,b.y,b.r);
+   if(isFire){
+     if(isPressed){
+       grd.addColorStop(0,'rgba(255,80,80,.9)');
+       grd.addColorStop(1,'rgba(180,20,30,.5)');
+     }else{
+       grd.addColorStop(0,'rgba(60,20,30,.85)');
+       grd.addColorStop(1,'rgba(20,8,12,.5)');
+     }
+   }else{
+     grd.addColorStop(0,'rgba(10,24,56,.7)');
+     grd.addColorStop(1,'rgba(10,24,56,.3)');
+   }
+   g.fillStyle=grd;
+   g.beginPath();
+   g.arc(b.x,b.y,b.r,0,TAU);
+   g.fill();
+   
+   // Borde con brillo
+   if(isFire){
+     g.strokeStyle=isPressed?'rgba(255,120,120,1)':'rgba(255,60,80,.9)';
+     g.lineWidth=isPressed?4:3;
+   }else{
+     g.strokeStyle='rgba(120,170,255,.85)';
+     g.lineWidth=2.5;
+   }
+   g.stroke();
+   
+   // Segundo borde interior fino
+   g.strokeStyle=isFire?'rgba(255,200,200,.35)':'rgba(180,220,255,.25)';
+   g.lineWidth=1;
+   g.beginPath();
+   g.arc(b.x,b.y,b.r*.82,0,TAU);
+   g.stroke();
+   
+   // Icono específico
+   if(b.id==='fire')drawTouchIcon(g,'bullet',b.x,b.y,b.r*.7,'#ffe9a0');
+   else if(b.id==='wall')drawTouchIcon(g,'wall',b.x,b.y,b.r*.75,'#cfe0ff');
+   else if(b.id==='reload')drawTouchIcon(g,'reload',b.x,b.y,b.r*.75,'#cfe0ff');
+   else if(b.id==='swap')drawTouchIcon(g,'swap',b.x,b.y,b.r*.7,'#cfe0ff');
+   else if(b.id==='pause'){
+     g.fillStyle='#cfe0ff';
+     g.fillRect(b.x-6,b.y-8,4,16);
+     g.fillRect(b.x+2,b.y-8,4,16);
+   }
+ }
+ const ring=(s,col)=>{
+   if(!s.on)return;
+   g.strokeStyle=col;
+   g.lineWidth=2;
+   g.fillStyle='rgba(10,24,56,.3)';
+   g.beginPath();
+   g.arc(s.ox,s.oy,62,0,TAU);
+   g.fill();
+   g.stroke();
+   g.fillStyle='rgba(180,210,255,.55)';
+   g.beginPath();
+   g.arc(s.x,s.y,26,0,TAU);
+   g.fill();
+ };
+ ring(stickL,'rgba(120,170,255,.7)');
+ ring(stickR,'rgba(255,120,130,.7)');
 }
 
 // ====================================================================
@@ -1501,7 +1844,18 @@ function touchStart(e){
  if(state!=='play'||!P)return;
  for(const t of e.changedTouches){
   const p=tpos(t);let hit=false;
-  for(const b of touchButtons())if(hyp(p.x-b.x,p.y-b.y)<b.r+10){hit=true;if(b.id==='wall')tryWall();else if(b.id==='reload')P.reload();else if(b.id==='swap')P.switchTo((P.cur+1)%4);else pauseGame();break}
+  // ═══ MEJORA: Detectar botones táctiles rediseñados (incluye fireBtn) ═══
+  for(const b of touchButtons()){
+    if(hyp(p.x-b.x,p.y-b.y)<b.r+12){
+      hit=true;
+      if(b.id==='fire'){fireBtn.down=true;fireBtn.pressed=true;fireBtn.id=t.identifier}
+      else if(b.id==='wall')tryWall();
+      else if(b.id==='reload')P.reload();
+      else if(b.id==='swap')P.switchTo((P.cur+1)%4);
+      else if(b.id==='pause')pauseGame();
+      break;
+    }
+  }
   if(hit)continue;
   if(p.x<W*.5&&!stickL.on){Object.assign(stickL,{on:true,id:t.identifier,ox:p.x,oy:p.y,x:p.x,y:p.y,vx:0,vy:0})}
   else if(p.x>=W*.5&&!stickR.on){Object.assign(stickR,{on:true,id:t.identifier,ox:p.x,oy:p.y,x:p.x,y:p.y,mag:0,ang:P.a,fire:false})}
@@ -1520,10 +1874,14 @@ function touchEnd(e){
  for(const t of e.changedTouches){
   if(t.identifier===stickL.id){stickL.on=false;stickL.vx=stickL.vy=0;stickL.id=-1}
   if(t.identifier===stickR.id){stickR.on=false;stickR.fire=false;stickR.id=-1}
+  // ═══ NUEVO: Liberar botón de disparo ═══
+  if(t.identifier===fireBtn.id){fireBtn.down=false;fireBtn.pressed=false;fireBtn.id=-1}
  }
 }
 cv.addEventListener('touchstart',touchStart,{passive:false});cv.addEventListener('touchmove',touchMove,{passive:false});cv.addEventListener('touchend',touchEnd,{passive:false});cv.addEventListener('touchcancel',touchEnd,{passive:false});
 if(window.matchMedia&&matchMedia('(pointer:coarse)').matches)isTouch=true;
+// ═══ NUEVO: Bloqueo de orientación horizontal al cargar ═══
+setTimeout(()=>{lockLandscape()},100);
 
 // ====================================================================
 //  REGION: Screen Management & UI Logic
@@ -1532,12 +1890,12 @@ const SCREENS=['menu','settings','skins','story','credits','pause','over'];
 function setState(s){
  state=s;for(const id of SCREENS)$(id).classList.toggle('on',id===s);
  document.body.classList.toggle('playing',s==='play'&&!isTouch);
- if(s!=='play'){mouse.down=false;stickL.on=stickR.on=false;stickL.vx=stickL.vy=0;stickR.fire=false}
+ if(s!=='play'){mouse.down=false;stickL.on=stickR.on=false;stickL.vx=stickL.vy=0;stickR.fire=false;fireBtn.down=false;fireBtn.id=-1}
  if(s==='credits'){const c=$('credits');c.classList.remove('on');void c.offsetWidth;c.classList.add('on')}
 }
 function pauseGame(){if(state==='play'&&!P.dead)setState('pause')}
 function resume(){if(state==='pause')setState('play')}
-const STORY='AÑO 2047.\n\nTras el Apagón Global, la corporación S_PDH tomó el control de la red energética de tres continentes. Su corazón: el CORE, un reactor subterráneo oculto bajo el Sector 7.\n\nConsorcios rivales enviaron mercenarios sin bandera para arrebatarlo. Las comunicaciones están cortadas. No hay refuerzos. No hay evacuación.\n\nTú eres el último operador de la unidad Fantasma: un arma, muros tácticos holográficos y hasta el amanecer.\n\nDefiende el CORE. Elimina todo lo que se mueva.';
+const STORY='AÑO 2047.\n\nTras el Apagón Global, la corporación S_PDH GORE tomó el control de la red energética de tres continentes. Su corazón: el CORE, un reactor subterráneo oculto bajo el Sector 7.\n\nConsorcios rivales enviaron mercenarios sin bandera para arrebatarlo. Las comunicaciones están cortadas. No hay refuerzos. No hay evacuación.\n\nTú eres el último operador de la unidad Fantasma: un arma, muros tácticos holográficos y hasta el amanecer.\n\nDefiende el CORE. Elimina todo lo que se mueva.';
 let storyI=0,storyTm=null;
 function openStory(){
  setState('story');storyI=0;$('storyTxt').textContent='';$('storyNext').textContent='CONTINUAR';clearInterval(storyTm);
