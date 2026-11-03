@@ -227,10 +227,6 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 
 <div id="multiplayer" class="screen">
   <div class="h2 cyan">MULTIJUGADOR 1v1</div>
-  <div class="mp-tabs">
-    <button class="btn sm mp-tab sel" data-mp="host">CREAR SALA</button>
-    <button class="btn sm mp-tab" data-mp="join">UNIRSE</button>
-  </div>
   <div class="mp-body">
     <div class="mp-panel" id="mpHostPanel">
       <div class="panel-title">CREAR SALA</div>
@@ -257,6 +253,10 @@ input[type=range]{width:100%;accent-color:var(--blue)}
       <button class="btn primary" data-a="mpjoin">CONECTAR</button>
       <div class="mp-status" id="mpStatus"></div>
     </div>
+  </div>
+  <div class="mp-tabs" style="margin:1.5vh 0 0;position:relative;z-index:5">
+    <button class="btn sm mp-tab sel" data-mp="host">CREAR SALA</button>
+    <button class="btn sm mp-tab" data-mp="join">UNIRSE</button>
   </div>
   <button class="btn" data-a="menu" style="margin-top:1.5vh">VOLVER</button>
 </div>
@@ -2056,7 +2056,7 @@ function act(a){
   case'exportdata':{const code=exportPlayerData();if(!code){alert('Error al exportar');break}try{navigator.clipboard.writeText(code)}catch(e){}prompt('Copia este código y guárdalo:',code);break}
   case'importdata':{const code=prompt('Pega tu código de backup aquí:');if(!code)break;if(importPlayerData(code)){alert('Datos importados correctamente');updateRankBadge();renderProfile();try{localStorage.setItem('spdh_skin',String(skinIdx))}catch(e){}SFX.pick()}else{alert('Código inválido')}break}
   case'multiplayer':setState('multiplayer');if(mpMode==='server'&&!MP.realCode)MP.createRealRoom();else if(mpMode==='local'&&!MP.roomId)MP.createLocal();break;
-  case'mpstart':if(MP.connected){if(MP.mode==='server'&&MP.ws)MP.ws.send(JSON.stringify({t:'start'}));else{MP.seed=(Math.random()*1e9)|0;MP.mapIdx=selectedMap;if(MP._kl0==null)MP._kl0=killLimit;killLimit=MP.goal||killLimit;MP.send({t:'start',seed:MP.seed,map:MP.mapIdx,k:killLimit})}MP.startMatch()}break;
+  case'mpstart':if(MP.connected){if(MP.mode==='server'&&MP.ws)MP.ws.send(JSON.stringify({t:'start'}));else{MP.seed=(Math.random()*1e9)|0;MP.mapIdx=selectedMap;if(MP._kl0==null)MP._kl0=killLimit;killLimit=MP.goal||killLimit;MP.send({t:'start',seed:MP.seed,map:MP.mapIdx,k:killLimit})}MP.startMatch()}else MP.setStatus('Aún no hay rival conectado');break;
   case'mpjoin':{const code=$('mpJoinCode').value.trim().toUpperCase();if(mpMode==='server'){if(code.length===6){MP.joinRealRoom(code,$('opNameInput')?.value||'RIVAL')}else{$('mpStatus').textContent='Código debe tener 6 caracteres'}}else{if(code.length===6){MP.joinLocal(code)}else if(code.length>40){MP.joinRemote(code)}else{$('mpStatus').textContent='Código inválido'}}break}
   case'mpremote':MP.createRemote();break;
   case'story':afterStory='menu';openStory();break;
@@ -2212,7 +2212,7 @@ const MP={
   loadPeer(){return new Promise((res,rej)=>{if(window.Peer)return res();const s=document.createElement('script');s.src='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';s.onload=res;s.onerror=()=>{const s2=document.createElement('script');s2.src='https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js';s2.onload=res;s2.onerror=()=>rej(new Error('lib'));document.head.appendChild(s2)};document.head.appendChild(s)})},
   wirePeer(c){this.pc=c;c.on('open',()=>{this.connected=true;this.setStatus('CONECTADO · '+(this.isHost?'ya puedes iniciar':'esperando al anfitrión'));const b=$('mpStartBtn');if(b&&this.isHost)b.textContent='INICIAR PARTIDA'});c.on('data',d=>this.onMsg(d));c.on('close',()=>{this.connected=false;this.setStatus('RIVAL DESCONECTADO');if(inGame&&G&&G.mpOnline&&state==='play'){floatText(P.x,P.y-60,'RIVAL SE DESCONECTÓ','#ffd34a',20,2);setTimeout(()=>{if(state==='play')endGame(true)},1500)}});c.on('error',()=>this.setStatus('Error de conexión'))},
   async createRealRoom(tries=0){try{this.leave();this.mode='server';this.isHost=true;this.setStatus('Creando sala...');await this.loadPeer();const code=this.code6();this.realCode=code;const p=this.peer=new Peer('spdhgore-'+code,PEERCFG);p.on('open',()=>{const el=$('mpRoomCode');if(el){el.textContent=code;el.onclick=()=>{try{navigator.clipboard.writeText(code);this.setStatus('CÓDIGO COPIADO · Esperando rival...')}catch(e){}}}this.setStatus('SALA LISTA · toca el código para copiarlo · Esperando rival...')});p.on('connection',c=>{if(this.pc&&this.pc.open){c.close();return}this.wirePeer(c)});p.on('disconnected',()=>{try{p.reconnect()}catch(e){}});p.on('error',e=>{if(e.type==='unavailable-id'&&tries<4)this.createRealRoom(tries+1);else this.setStatus('Error: '+e.type)})}catch(e){this.setStatus('No se pudo cargar el online. Revisa tu internet o usa LOCAL.')}},
-  async joinRealRoom(code,name){try{this.leave();this.mode='server';this.isHost=false;this.setStatus('Conectando...');await this.loadPeer();const p=this.peer=new Peer(undefined,PEERCFG);p.on('open',()=>{const c=p.connect('spdhgore-'+code,{reliable:true});this.wirePeer(c);clearTimeout(this._jt);this._jt=setTimeout(()=>{if(!this.connected)this.setStatus('No se pudo conectar. Revisa el código o intenta otra vez')},15000)});p.on('error',e=>this.setStatus(e.type==='peer-unavailable'?'Sala no encontrada':'Error: '+e.type))}catch(e){this.setStatus('No se pudo cargar el online.')}},
+  async joinRealRoom(code,name){try{this.leave();this.mode='server';this.isHost=false;this.setStatus('Conectando...');await this.loadPeer();const p=this.peer=new Peer(undefined,PEERCFG);p.on('open',()=>{const c=p.connect('spdhgore-'+code,{reliable:true,serialization:'json'});this.wirePeer(c);clearTimeout(this._jt);this._jt=setTimeout(()=>{if(!this.connected)this.setStatus('No se pudo conectar. Revisa el código o intenta otra vez')},15000)});p.on('error',e=>this.setStatus(e.type==='peer-unavailable'?'Sala no encontrada':'Error: '+e.type))}catch(e){this.setStatus('No se pudo cargar el online.')}},
   async setupRealPC(){
    this.realPC=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
    this.realPC.onicecandidate=(e)=>{if(e.candidate)this.ws.send(JSON.stringify({t:'signal',data:{ice:e.candidate}}))};
@@ -2245,14 +2245,14 @@ const MP={
    if(m.t==='hello'){if(this.isHost){this.send({t:'welcome',from:'host'});this.connected=true;this.setStatus('CONECTADO');const b=$('mpStartBtn');if(b)b.textContent='INICIAR PARTIDA'}}
    else if(m.t==='welcome'){this.connected=true;this.setStatus('CONECTADO')}
    else if(m.t==='start'){this.startMatch()}
-   else if(m.t==='state'){if(this.remoteState&&!this.remoteState.dead&&m.dead&&G){G.teamKills++;floatText(m.x,m.y-30,'ELIMINADO','#ff3a4a',24,1.3);SFX.kill();if(G.teamKills>=G.targetKills)setTimeout(()=>endGame(true),800)}this.remoteState=m}
+   else if(m.t==='state'){if(this.remoteState&&!this.remoteState.dead&&m.dead&&G){G.teamKills++;floatText(m.x,m.y-30,'ELIMINADO','#ff3a4a',24,1.3);SFX.kill();}this.remoteState=m}
    else if(m.t==='shot'){if(inGame&&G){const w=WBY[m.w]||WBY.rifle;{const nb=new Bullet(m.x,m.y,m.a,w.speed,0,'v',w.range,w.trace,w.tw,w.tl);if(w.boom)nb.boom=w.boom;if(w.flame)nb.fl=1;bullets.push(nb)}if(P)SFX[w.id](clamp(1-hyp(m.x-P.x,m.y-P.y)/1100,.1,.7))}}
    else if(m.t==='hit'){if(P&&!P.dead)P.hurt(m.dmg,m.ang)}
    else if(m.t==='leave'){this.connected=false;this.setStatus('RIVAL DESCONECTADO')}
   },
   setStatus(s){['mpStatus','mpHostStatus'].forEach(i=>{const el=$(i);if(el)el.textContent=s})},
   leave(){if(this._kl0!=null){killLimit=this._kl0;this._kl0=null}clearTimeout(this._jt);if(this.pc){try{this.pc.close()}catch(e){}this.pc=null}if(this.chan){try{this.chan.close()}catch(e){}this.chan=null}if(this.peer){try{this.peer.close()}catch(e){}this.peer=null}if(this.realPC){try{this.realPC.close()}catch(e){}this.realPC=null}if(this.realDC){try{this.realDC.close()}catch(e){}this.realDC=null}if(this.ws&&this.ws.readyState===WebSocket.OPEN){try{this.ws.send(JSON.stringify({t:'leave'}));this.ws.close()}catch(e){}}this.ws=null;this.connected=false;this.remoteState=null;this.remotePlayer=null;this.realCode=null},
-  tick(dt){if(!this.connected||!P||!inGame)return;this.pt=(this.pt||0)+dt;if(this.pt>2){this.pt=0;this.send2({t:'ping',ts:performance.now()})}this.lastSent+=dt;if(this.lastSent<1/this.sendHz)return;this.lastSent=0;this.send2({t:'state',x:P.x,y:P.y,a:P.a,hp:P.hp,max:P.max,name:P.name,dead:P.dead,sk:skinIdx,w:P.wp.id,kills:G?G.kills:0})},
+  tick(dt){if(P&&inGame&&G&&G.mpOnline&&!G.mpEnded){if(G.teamKills>=G.targetKills){G.mpEnded=1;setTimeout(()=>{if(state==='play')endGame(true)},900)}else if(G.enemyTeamKills>=G.targetKills){G.mpEnded=1;setTimeout(()=>{if(state==='play')endGame(false)},900)}}if(!this.connected||!P||!inGame)return;this.pt=(this.pt||0)+dt;if(this.pt>2){this.pt=0;this.send2({t:'ping',ts:performance.now()})}this.lastSent+=dt;if(this.lastSent<1/this.sendHz)return;this.lastSent=0;this.send2({t:'state',x:P.x,y:P.y,a:P.a,hp:P.hp,max:P.max,name:P.name,dead:P.dead,sk:skinIdx,w:P.wp.id,kills:G?G.kills:0})},
     startMatch(){matchMode='1V1';this._skipAI=true;startGame();this._skipAI=false;if(G)G.mpOnline=true;P.x=CORE_C()+(this.isHost?-200:200);P.y=CORE_C()+150;cam.x=P.x;cam.y=P.y;this.remoteState=null;this.remotePlayer={x:CORE_C()+(this.isHost?200:-200),y:CORE_C()+150,a:0,hp:180,max:180,dead:false,name:'RIVAL'}},
   drawRemote(g){
    if(!this.remoteState||!this.remotePlayer)return;
